@@ -3,25 +3,23 @@ Title: Setup a project in the tflow style for using the targets package
 Version: 0.0.0.9000
 Authors@R: c(
    person("Miles", "McBain", email = "miles.mcbain@gmail.com", role = c("aut", "cre")),
-   person("Shir", "Dekel", email = "shirdekel@yahoo.com.au", role = "ctb"))
+   person("Shir", "Dekel", email = "shirdekel@yahoo.com.au", role = "ctb"),
+   person("Aurelien", "Ginolhac", email = "ginolhac@gmail.com", role = "ctb"))
 Description: Has a function that sets up an R workflow in the dflow style, using targets.
 Depends: R (>= 3.5.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-    usethis,
-    fnmate,
+    cli,
+    dotenv,
     glue,
-    readr,
-    cli
+    targets,
+    tarchetypes,
+    renv,
+    usethis
+Remotes:
+    ropensci/tarchetypes@main
 Suggests: 
     conflicted,
-    capsule,
-    dotenv,
-    targets,
-    tarchetypes
-Remotes: 
-    milesmcbain/fnmate,
-    milesmcbain/capsule
 RoxygenNote: 7.1.1

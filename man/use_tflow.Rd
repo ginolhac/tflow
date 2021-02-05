@@ -4,7 +4,10 @@
 \alias{use_tflow}
 \title{use_tflow}
 \usage{
-use_tflow()
+use_tflow(path = ".")
+}
+\arguments{
+\item{path}{a folder name}
 }
 \value{
 Nothing. Modifies your workspace.

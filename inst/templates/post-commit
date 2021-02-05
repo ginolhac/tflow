@@ -1,0 +1,14 @@
+#!/bin/bash
+
+MSG=`git log -n 1 --pretty=format:'%s'`
+DATE=`date '+%y%m%d'`
+PROJECT=`git rev-parse --show-toplevel | awk -F '/' '{print $NF}'`
+YEAR=`date '+%Y'`
+LABBOOK="${HOME}/Desktop/labbook_aurelien_${YEAR}.tsv"
+
+if [ -e "$LABBOOK" ]; then
+    echo -e "$DATE\t$PROJECT\t$MSG" >> "$LABBOOK"
+else
+    echo "no labbook found"
+    exit 1
+fi

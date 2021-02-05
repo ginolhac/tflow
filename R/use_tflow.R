@@ -3,13 +3,44 @@
 ##' Creates files and directories according to the tflow template.
 ##'
 ##' @title use_tflow
+##' @param path a folder name
 ##' @return Nothing. Modifies your workspace.
 ##' @export
-use_tflow <- function(){
-  usethis::use_directory("R")
-  usethis::use_template("packages.R", package = "tflow")
+use_tflow <- function(path = "."){
+  tryCatch(
+    expr = {
+      # try to get the project if any
+      usethis::proj_get(path = path)
+    },
+    error = function(e){
+      # if no project, create one
+      usethis::create_project(path)
+    },
+    finally = {
+      Sys.umask("026") # files permissions 640
+      use_gitignore()
+    }
+  )
+  usethis::use_rstudio()
+  # modify Rproj to add Custom Build
+  name_proj <- dir(".", pattern = "Rproj$")
+  stopifnot(length(name_proj) > 0)
+  proj <- c(readLines(name_proj), "", "BuildType: Custom", "CustomScriptPath: run.R")
+  writeLines(proj, name_proj)
+  renv::init()
+  usethis:::git_init()
+  postc <- system.file("templates", "post-commit", package = "tflow", mustWork = TRUE)
+  usethis::use_git_hook("post-commit", postc)
+  usethis::use_template("fun.R", package = "tflow",
+                        save_as = "R/functions.R")
   usethis::use_template("_targets.R", package = "tflow")
-  usethis::use_template(".env", package = "tflow")
+  usethis::use_template("run.R", package = "tflow")
+  usethis::use_template("_env", package = "tflow",
+                        save_as = ".env")
+  # remove .here as we use a RStudio project
+  unlink(".here")
+  # executable run.R
+  Sys.chmod("run.R", "750", use_umask = FALSE)
 }
 
 ##' Generate a target for an R markdown file
@@ -38,7 +69,7 @@ rmd_target <- function(target_name) {
 ##' @return the path of the file created. (invisibly)
 ##' @export
 ##' @author Miles McBain
-use_rmd <- function(target_name) {
+use_rmd <- function(target_name = "report") {
 
   target_file <- paste0(target_name, ".Rmd")
 
@@ -59,13 +90,6 @@ use_rmd <- function(target_name) {
 
   message(rmd_target(target_name))
 
-  if (file.exists("./packages.R") && !contains_rmarkdown("./packages.R")) {
-    packages <- readr::read_lines("./packages.R")
-    packages <- c(packages, "library(rmarkdown)")
-    readr::write_lines(packages, "./packages.R")
-    message(cli::symbol$tick," Writing 'library(rmarkdown)' to './packages.R'")
-  }
-
  invisible(file_path)
 
 }
@@ -73,7 +97,7 @@ use_rmd <- function(target_name) {
 ##' Use a starter .gitignore
 ##'
 ##' Drop a starter .gitignore in the current working directory, including
-##' ignores for targets and capsule (renv).
+##' ignores for targets and renv
 ##'
 ##' @title use_gitignore
 ##' @return nothing, creates a file.

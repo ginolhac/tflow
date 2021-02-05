@@ -14,7 +14,7 @@ Use a starter .gitignore
 }
 \details{
 Drop a starter .gitignore in the current working directory, including
-ignores for targets and capsule (renv).
+ignores for targets and renv
 }
 \author{
 Miles McBain

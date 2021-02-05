@@ -4,7 +4,7 @@
 \alias{use_rmd}
 \title{use_rmd}
 \usage{
-use_rmd(target_name)
+use_rmd(target_name = "report")
 }
 \arguments{
 \item{target_name}{a name for target and the generated R markdown document.}
